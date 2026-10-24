@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda do Corte</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 15px;
+      font-family: Arial, sans-serif;
+      background: #f1f4ed;
+      color: #1b2b20;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    header p {
+      color: #607064;
+    }
+
+    .precos {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .preco {
+      flex: 1;
+      background: white;
+      padding: 15px 8px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 3px 12px #00000008;
+    }
+
+    .preco strong {
+      display: block;
+      font-size: 18px;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px #0000000d;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d4ddd1;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 22px;
+      border: none;
+      border-radius: 9px;
+      background: #c8f169;
+      color: #1b2b20;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b6e454;
+    }
+
+    #resultado {
+      margin-top: 18px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #607064;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <h1>✂️ Agenda do Corte</h1>
+      <p>Seu próximo corte começa aqui!</p>
+    </header>
+
+    <section class="precos">
+      <div class="preco">
+        Corte clássico
+        <strong>R$ 35</strong>
+      </div>
+
+      <div class="preco">
+        Corte + barba
+        <strong>R$ 50</strong>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📅 Agende seu horário</h2>
+
+      <form id="formAgendamento">
+
+        <label for="nome">Seu nome</label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          placeholder="Digite seu nome"
+          required
+        >
+
+        <label for="telefone">Seu WhatsApp</label>
+        <input
+          type="tel"
+          id="telefone"
+          name="telefone"
+          placeholder="(00) 00000-0000"
+          required
+        >
+
+        <label for="servico">Escolha o serviço</label>
+        <select id="servico" name="servico" required>
+          <option value="Corte clássico - R$ 35">
+            Corte clássico - R$ 35
+          </option>
+          <option value="Corte + barba - R$ 50">
+            Corte + barba - R$ 50
+          </option>
+          <option value="Só barba - R$ 20">
+            Só barba - R$ 20
+          </option>
+        </select>
+
+        <label for="data">Escolha a data</label>
+        <input type="date" id="data" name="data" required>
+
+        <label for="horario">Escolha o horário</label>
+        <select id="horario" name="horario" required>
+          <option value="">Selecione um horário</option>
+          <option value="09:00">09:00</option>
+          <option value="09:30">09:30</option>
+          <option value="10:00">10:00</option>
+          <option value="10:30">10:30</option>
+          <option value="11:00">11:00</option>
+          <option value="13:00">13:00</option>
+          <option value="13:30">13:30</option>
+          <option value="14:00">14:00</option>
+          <option value="14:30">14:30</option>
+          <option value="15:00">15:00</option>
+          <option value="15:30">15:30</option>
+          <option value="16:00">16:00</option>
+          <option value="16:30">16:30</option>
+          <option value="17:00">17:00</option>
+          <option value="17:30">17:30</option>
+        </select>
+
+        <label for="observacoes">
+          Como você quer o corte?
+        </label>
+        <textarea
+          id="observacoes"
+          name="observacoes"
+          rows="3"
+          placeholder="Ex.: degradê baixo, tirar pouco em cima..."
+        ></textarea>
+
+        <button type="submit">
+          Solicitar agendamento pelo WhatsApp
+        </button>
+      </form>
+
+      <div id="resultado" aria-live="polite"></div>
+    </section>
+
+    <footer>
+      Seu pedido será enviado pelo WhatsApp para confirmação.
+    </footer>
+
+  </div>
+
+  <script>
+    const formulario =
+      document.getElementById("formAgendamento");
+
+    const campoData =
+      document.getElementById("data");
+
+    // Impede selecionar datas anteriores a hoje.
+    const hoje = new Date();
+
+    hoje.setMinutes(
+      hoje.getMinutes() - hoje.getTimezoneOffset()
+    );
+
+    campoData.min = hoje.toISOString().split("T")[0];
+
+    formulario.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      // Pega os dados preenchidos pelo cliente.
+      const nome =
+        document.getElementById("nome").value.trim();
+
+      const telefone =
+        document.getElementById("telefone").value.trim();
+
+      const servico =
+        document.getElementById("servico").value;
+
+      const data =
+        document.getElementById("data").value;
+
+      const horario =
+        document.getElementById("horario").value;
+
+      const observacoes =
+        document.getElementById("observacoes").value.trim()
+        || "Nenhuma";
+
+      // Converte a data para o formato brasileiro.
+      const [ano, mes, dia] = data.split("-");
+      const dataFormatada = `${dia}/${mes}/${ano}`;
+
+      // Monta a mensagem para o barbeiro.
+      const mensagem = [
+        "✂️ *NOVO PEDIDO DE AGENDAMENTO*",
+        "",
+        `*Cliente:* ${nome}`,
+        `*WhatsApp do cliente:* ${telefone}`,
+        `*Serviço:* ${servico}`,
+        `*Data desejada:* ${dataFormatada}`,
+        `*Horário desejado:* ${horario}`,
+        `*Observações:* ${observacoes}`,
+        "",
+        "Favor confirmar a disponibilidade do horário."
+      ].join("\n");
+
+      // Número do barbeiro com código do Brasil.
+      const numeroBarbeiro = "55991232964";
+
+      // Cria o link com a mensagem preenchida.
+      const linkWhatsApp =
+        "https://wa.me/" + numeroBarbeiro +
+        "?text=" + encodeURIComponent(mensagem);
+
+      // Abre a conversa no WhatsApp.
+      window.location.href = linkWhatsApp;
+    });
+  </script>
+</body>
+</html>
